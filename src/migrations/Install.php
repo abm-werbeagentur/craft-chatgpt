@@ -42,6 +42,9 @@ class Install extends Migration
 			'template' => $this->string()->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue(true),
 			'temperature' => $this->float()->notNull(),
+			'wordsType' => $this->integer()->notNull()->defaultValue(1),
+			'wordsNumber' => $this->integer()->notNull(),
+			'wordsMultiplier' => $this->float()->notNull(),
 			'replaceText' => $this->integer()->notNull()->defaultValue(1),
 
 			'dateCreated' => $this->dateTime()->notNull(),

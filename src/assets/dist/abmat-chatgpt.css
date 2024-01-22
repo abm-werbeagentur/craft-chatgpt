@@ -10,3 +10,12 @@
 .field .input:has(.abm-chatgpt-button) .ck-sticky-panel__content {
 	padding-right: 125px;
 }
+
+.abm-chatgpt-words-count .flex {
+	align-items: initial;
+	gap: 20px;
+}
+.abm-chatgpt-words-block {
+	padding: 20px;
+	border: 1px solid #eee;
+}

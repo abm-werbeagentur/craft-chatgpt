@@ -34,10 +34,13 @@ class PromptsController extends \craft\web\Controller {
 		$promptModel = new PromptModel();
 		$promptModel->id = $request->getParam( 'id' )??0;
 		$promptModel->label = $request->getRequiredParam( 'label' );
-		$promptModel->template = $request->getRequiredParam( 'template' );
 		$promptModel->active = $request->getRequiredParam( 'active' );
-		$promptModel->replaceText = $request->getRequiredParam( 'replaceText' );
 		$promptModel->temperature = $request->getRequiredParam( 'temperature' );
+		$promptModel->wordsType = $request->getRequiredParam( 'wordsType' );
+		$promptModel->wordsNumber = $request->getRequiredParam( 'wordsNumber' );
+		$promptModel->wordsMultiplier = $request->getRequiredParam( 'wordsMultiplier' );
+		$promptModel->replaceText = $request->getRequiredParam( 'replaceText' );
+		$promptModel->template = $request->getRequiredParam( 'template' );
 
 		if ( ! $promptModel->validate() ) {
 			return $this->renderTemplate( 'abm-chatgpt/prompts/_edit', [

@@ -9,7 +9,7 @@ use abmat\chatgpt\records\PromptRecord;
 
 class PromptProcessor {
 
-	public function process($data){
+	public function process($data) {
 
 		$prompt = $data['prompt']??'';
 		$query = $data['query']??'';
@@ -19,7 +19,7 @@ class PromptProcessor {
 			throw new \Exception(Craft::t('abm-chatgpt', "Missing required parameters"));
 		}
 
-		if($systemPrompt = $this->_processSystemPrompt($prompt,$query,$lang) != false) {
+		if(($systemPrompt = $this->_processSystemPrompt($prompt,$query,$lang)) != false) {
 			return $systemPrompt;
 		}
 
@@ -33,10 +33,20 @@ class PromptProcessor {
 
 		$temperature = $promptRecord->temperature;
 
+		$maxTokens = round($promptRecord->wordsNumber * 1.33);
+		if ($promptRecord->wordsType == 2) {
+
+			$maxTokens = round($this->_countWords($query) * $promptRecord->wordsMultiplier * 1.33);
+		}
+
 		return [
-			'processed'=>ChatGptPlugin::getInstance()->request->send($prompt, 30000, $temperature),
+			'processed'=>ChatGptPlugin::getInstance()->request->send($query, $prompt, $maxTokens, $temperature),
 			'replaceText'=>$promptRecord->replaceText
 		];
+	}
+	
+	private function _countWords($str){
+		return count(preg_split('~[^\p{L}\p{N}\']+~u', $str));
 	}
 
 	private function _processSystemPrompt($prompt,$query,$lang) {
@@ -44,7 +54,7 @@ class PromptProcessor {
 		if($prompt == '_translate_'){
 			$prompt="Translate to {$lang}: {$query}";
 			return [
-				'processed'=>ChatGptPlugin::getInstance()->request->send($prompt, 30000, 0.7, true),
+				'processed'=>ChatGptPlugin::getInstance()->request->send($query, $prompt, 30000, 0.7, true),
 				'replaceText'=>1
 			];
 		}

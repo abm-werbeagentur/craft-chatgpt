@@ -16,6 +16,13 @@ return [
 	'Enabled' => 'Aktiviert',
 	'No prompts exist yet.' => 'Es gibt noch keine Prompt.',
 	'temperatureDescription' => 'Welche Sampling-Temperatur soll verwendet werden, zwischen 0 und 2. Höhere Werte wie 0,8 machen die Ausgabe zufälliger, während niedrigere Werte wie 0,2 sie gezielter und deterministischer machen',
+	'Number of words to generate' => 'Anzahl der zu erzeugenden Wörter',
+	'Approx. fixed number of words' => 'Ungefähr festgelegte Anzahl von Wörtern',
+	'Number of words' => 'Anzahl der Wörter',
+	'numberOfWordsDescription' => 'Wählen Sie diese Option, wenn Sie eine feste Anzahl von Wörtern erzeugen möchten, unabhängig davon, wie lang der ausgewählte Text ist. Dies ist für bestimmte Arten von Aufforderungen hilfreich, z. B. für die Erstellung eines Absatzes zu einem bestimmten Thema.',
+	'Relative to length of text' => 'Relativ zur Länge des Textes',
+	'Multiplier'=>'Multiplikator',
+	'multiplierDescription' => 'Wählen Sie diese Option, wenn Sie die Länge der generierten Wörter im Verhältnis zur Länge der ausgewählten Wörter berechnen möchten. 1x = gleiche Länge wie der markierte Text, 2x bedeutet das Doppelte, usw. Die Zusammenfassung ist ein guter Kandidat für die Verwendung dieser Option.',
 	'Replace the text' => 'Ersetzen Sie den Text',
 	'promptReplaceText' => 'Der Text wird automatisch an ChatGPT gesendet und die Antwort wird den Text ersetzen. Wenn diese Option nicht ausgewählt ist, wird die Antwort von ChatGPT angehängt. Sie können dieses Verhalten für jeden Prompt separat ändern, indem Sie diese Option auswählen.',
 

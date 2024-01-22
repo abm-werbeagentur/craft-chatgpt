@@ -27,6 +27,21 @@ class PromptModel extends Model
 	public float $temperature = 0.7;
 
 	/**
+	 * @var int
+	 */
+	public int $wordsType = 2;
+
+	/**
+	 * @var int
+	 */
+	public int $wordsNumber = 0;
+
+	/**
+	 * @var float
+	 */
+	public float $wordsMultiplier = 2;
+
+	/**
 	 * @var bool
 	 */
 	public bool $replaceText = true;

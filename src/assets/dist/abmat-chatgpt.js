@@ -10,9 +10,22 @@ $(document).on("click", "a.doAi-abm-chatgpt", function( ) {
 	let $field = $('button[data-hash="' + $(this).data('hash') + '"]').parents('.field').first();
 	let input = $field.find('.input input, .input textarea').first();
 	let query = input.val();
-	
+
 	let prompt = $(this).data('prompt');
 	let lang = $(this).data('lang');
+
+	let processingText = "Processing ...";
+	if ($field.attr('data-type') == 'craft\\redactor\\Field') {
+		let textareaId = input.attr('id');
+		$R('#' + textareaId, 'source.setCode', processingText);
+
+	} else if ($field.attr('data-type') == 'craft\\ckeditor\\Field') {
+		let ckEditorInstance = $field.find(".input .ck-editor__editable")[0].ckeditorInstance;
+		ckEditorInstance.setData(processingText);		
+
+	} else {
+		input.val(processingText);
+	}
 
 	abm_chatgpt_sendRequest(prompt, query, lang).then((response) => {
 		
@@ -30,6 +43,7 @@ $(document).on("click", "a.doAi-abm-chatgpt", function( ) {
 				}
 			}
 		} else {
+			data = query;
 			errorMessages = (response.msg).replaceAll('<br>','\n');
 		}
 		

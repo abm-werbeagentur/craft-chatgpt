@@ -1,6 +1,8 @@
 {% extends '_layouts/cp' %}
 {% import '_includes/forms' as forms %}
 
+{% do view.registerAssetBundle("abmat\\chatgpt\\assets\\ChatGptAssets") %}
+
 {% set isNewPrompt = true %}
 {% if prompt.id %}
 	{% set isNewPrompt = false %}
@@ -64,6 +66,53 @@
                     data-gtm-form-interact-field-id="0"
             >
             <span>{{ prompt.temperature }}</span>
+        </div>
+    </div>
+
+    <div class="abm-chatgpt-words-count field">
+        <div class="heading"><label>{{ 'Number of words to generate'|t('abm-chatgpt')}}</label></div>
+        <div class="flex flex-nowrap">
+            <div class="abm-chatgpt-words-block">
+                <input type="radio" class="radio" name="wordsType" id="wordsType1" value="1"
+                       {% if prompt.wordsType==1 %}checked{% endif %}>
+                <label for="wordsType1">{{ 'Approx. fixed number of words'|t('abm-chatgpt') }}</label>
+
+                {{ forms.textField({
+                    label: 'Number of words'|t('abm-chatgpt'),
+                    name: 'wordsNumber',
+                    errors: prompt.getErrors('wordsNumber'),
+                    required: true,
+                    value: prompt.wordsNumber,
+                    autofocus: true,
+                }) }}
+                <p>{{ 'numberOfWordsDescription'|t('abm-chatgpt')}}</p>
+            </div>
+            <div class="abm-chatgpt-words-block">
+                <input type="radio" class="radio" name="wordsType" id="wordsType2" value="2"
+                       {% if prompt.wordsType==2 %}checked{% endif %}>
+                <label for="wordsType2">{{ 'Relative to length of text'|t('abm-chatgpt')}}</label>
+
+                <div class="abm-slider field">
+                    <div class="heading">
+                        <label>{{ 'Multiplier'|t('abm-chatgpt') }}</label>
+                    </div>
+                    <div class="flex">
+                        <input
+                                type="range"
+                                step="0.1"
+                                min="0"
+                                max="6"
+                                class="buddy-slider"
+                                id="wordsMultiplier"
+                                value="{{ prompt.wordsMultiplier }}"
+                                name="wordsMultiplier"
+                                data-prefix="x"
+                        >
+                        <span>x{{ prompt.wordsMultiplier }}</span>
+                    </div>
+                    <p style="margin-top: 40px">{{ 'multiplierDescription'|t('abm-chatgpt')}}</p>
+                </div>
+            </div>
         </div>
     </div>
 

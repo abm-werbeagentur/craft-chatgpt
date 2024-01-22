@@ -16,13 +16,13 @@ class Request {
 		$this->_settings = ChatGptPlugin::getInstance()->getSettings();
 	}
 
-	public function send( $prompt, $maxTokens, $temperature,$isTranslate = false ) {
+	public function send($query, $prompt, $maxTokens, $temperature, $isTranslate = false ) {
 		try {
 			$model = $this->_settings->preferredModel;
 
 			$maxTokens = min( $maxTokens, $this->_getMaxTokensForModel( $model ) );
-			if($isTranslate){
-				$maxTokens = $maxTokens /2;
+			if($isTranslate) {
+				$maxTokens = floor($maxTokens/2);
 			}
 
 			$client = new Client();
@@ -35,8 +35,9 @@ class Request {
 				'http_errors'=>false
 			] );
 
-			$body = $res->getBody();
+			$body = $res->getBody()->getContents();
 			$json = json_decode( $body, true );
+
 			if(isset($json['error'])){
 				$message = $json['error']['message'];
 
@@ -57,11 +58,13 @@ class Request {
 	}
 
 	protected function _getMaxTokensForModel( $model ) {
+
 		if ( strpos( $model, 'gpt-3.5-turbo' ) === 0 ) {
-			return 14000;
+			return 4097;
 
 		} elseif ( strpos( $model, 'gpt-4' ) === 0 ) {
 			return 7900;
+
 		}
 
 		return 2000;
@@ -84,6 +87,7 @@ class Request {
 	}
 
 	protected function _getTextGenerationBasedOnModel( $model, $choices ) {
+
 		return trim( $choices[0]['message']['content'] );
 	}
 

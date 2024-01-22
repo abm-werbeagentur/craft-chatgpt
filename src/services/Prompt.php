@@ -19,6 +19,9 @@ class Prompt extends \craft\base\Component {
 		$promptRecord->uid = StringHelper::UUID();
 		$promptRecord->label = $promptModel->label;
 		$promptRecord->template = $promptModel->template;
+		$promptRecord->wordsType = $promptModel->wordsType;
+		$promptRecord->wordsNumber = $promptModel->wordsNumber;
+		$promptRecord->wordsMultiplier = $promptModel->wordsMultiplier;
 		$promptRecord->active = $promptModel->active;
 		$promptRecord->replaceText = $promptModel->replaceText;
 		$promptRecord->temperature = $promptModel->temperature;

@@ -15,12 +15,16 @@ Open your Craft project's control panel, navigate to the Plugin Store, and searc
 
 Open your terminal, navigate to your Craft project's root directory and run the following command:
 
+```
 # tell Composer to load the plugin
+
 composer require abmat/craft-chatgpt
 
 # tell Craft to install the plugin
+
 php craft plugin/install abm-chatgpt
+```
 
 ### Requirements
 
-TChat Gpt 1.x requires Craft CMS 4.
+Chat Gpt 1.x requires Craft CMS 4.

@@ -1,0 +1,70 @@
+{% extends '_layouts/cp' %}
+
+{% import '_includes/forms' as forms %}
+
+{% set title = 'Prompts' %}
+{% set selectedSubnavItem = 'abm-chatgpt-prompts' %}
+
+{% set crumbs = [
+    { label: 'Chat GPT'|t('abm-chatgpt'), url: url('abm-chatgpt') },
+    { label: 'Prompts'|t('abm-chatgpt'), url: url('abm-chatgpt/prompts') },
+] %}
+
+
+{% block headertitle %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block actionButton %}
+    <a href="{{ cpUrl('abm-chatgpt/prompts/add') }}" class="btn submit add icon">{{ 'New Prompt'|t('abm-chatgpt') }}</a>
+{% endblock %}
+
+{% block contextMenu %}
+
+{% endblock %}
+
+{% block content %}
+
+    {% if prompts|length %}
+
+        <div class="tableview tablepane">
+            <table class="data fullwidth">
+                <thead>
+                <tr>
+                    <th scope="col">{{ 'Id'|t('app') }}</th>
+                    <th scope="col">{{ 'Label'|t('app') }}</th>
+                    <th scope="col">{{ 'Prompt Template'|t('abm-chatgpt') }}</th>
+                    <th scope="col">{{ 'Temperature'|t('abm-chatgpt') }}</th>
+                    <th scope="col">{{ 'Replace the text'|t('abm-chatgpt') }}</th>
+                    <th scope="col">{{ 'Enabled'|t('abm-chatgpt') }}</th>
+                    <th class="thin"></th>
+                    <th class="thin"></th>
+                </tr>
+                </thead>
+                {% for prompt in prompts %}
+                    <tbody>
+                    <tr class="s-{{ prompt.id }}">
+                        <td class="id-column">{{ prompt.id }}</td>
+                        <td class="label-column"><a href="{{ cpUrl('abm-chatgpt/prompts/edit/' ~ prompt.id) }}">{{ prompt.label }}</a></td>
+                        <td class="prompt-template-column">{{ prompt.template }}</td>
+                        <td class="temperature-column">{{ prompt.temperature }}</td>
+						<td class="replace-the-text-column"><span class="status {{ prompt.replaceText ? 'live' : 'disabled' }}" role="img" aria-label="Replace the Text"></span></td>
+						<td class="enabled-column"><span class="status {{ prompt.active ? 'live' : 'disabled' }}" role="img" aria-label="Status: Live"></span></td>
+                        <td class="edit-column"><a href="{{ cpUrl('abm-chatgpt/prompts/edit/' ~ prompt.id) }}" class="edit icon" title="{{ 'Edit'|t('app') }}" role="button"></a></td>
+                        <td class="delete-column"><a href="{{ cpUrl('abm-chatgpt/prompts/delete/' ~ prompt.id) }}" class="delete icon" title="{{ 'Delete'|t('app') }}" role="button"></a></td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <div>
+            <p>{{ 'No prompts exist yet.'|t('abm-chatgpt') }}</p>
+        </div>
+    {% endif %}
+    <style>
+        .prompt-template-column {
+            max-width: 640px;
+        }
+    </style>
+{% endblock %}

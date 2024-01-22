@@ -1,0 +1,14 @@
+function abm_chatgpt_sendRequest(prompt, query, lang) {
+	let sendData = {
+		"prompt": prompt,
+		"query": query,
+		"lang": lang,
+		[Craft.csrfTokenName]: Craft.csrfTokenValue
+	};
+	
+	return $.ajax({
+		type: "POST",
+		url: "{{ actionUrl('abm-chatgpt/prompt-request/process') }}",
+		data: sendData
+	});
+}

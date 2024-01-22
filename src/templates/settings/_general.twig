@@ -1,0 +1,46 @@
+{% extends 'abm-chatgpt/_layouts/_settings' %}
+{% import '_includes/forms' as forms %}
+
+{% set title = 'Settings' %}
+{% set selectedSubnavItem = 'settings' %}
+
+{% if craft.app.config.general.allowAdminChanges %}
+    {% set fullPageForm = true %}
+{% endif %}
+
+{% block content %}
+     {% if not craft.app.config.general.allowAdminChanges %}
+         {{ "General config {configvar} is set to false."|t('abm-chatgpt',{
+            "configvar": "craft.app.config.general.allowAdminChanges"
+        })}}
+        <br />
+        {{ "To set any settings, you have to enable this config"|t('abm-chatgpt')}}
+	 	
+	 {% else %}
+        <input type="hidden" name="action" value="plugins/save-plugin-settings">
+        <input type="hidden" name="pluginHandle" value="abm-chatgpt">
+        {% namespace 'settings' %}
+
+            {{ forms.selectField({
+                label: 'OpenAI Preferred Model'|t('abm-chatgpt'),
+                name: 'preferredModel',
+                value: settings.preferredModel,
+                instructions: 'modelDescription'|t('abm-chatgpt'),
+                options: {
+                    "gpt-4":"gpt-4",
+                    "gpt-4-32k":"gpt-4-32k",
+                    "gpt-3.5-turbo":"gpt-3.5-turbo",
+                },
+            }) }}
+
+            {{ forms.autosuggestField({
+                label: 'API: Access Token'|t('abm-chatgpt'),
+                name: 'apiToken',
+                value: settings.apiToken,
+                instructions: 'Access token for the ChatGPT API'|t('abm-chatgpt'),
+                suggestEnvVars: true,
+            }) }}
+
+        {% endnamespace %}
+    {% endif %}
+{% endblock %}

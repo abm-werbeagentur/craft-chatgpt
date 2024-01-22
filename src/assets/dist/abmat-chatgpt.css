@@ -1,0 +1,12 @@
+.field .input:has(.abm-chatgpt-button) textarea,
+.field .input:has(.abm-chatgpt-button) input {
+	padding-right: 125px;
+}
+
+.field .input:has(.abm-chatgpt-button) .redactor-toolbar-wrapper {
+	padding-right: 125px;
+}
+
+.field .input:has(.abm-chatgpt-button) .ck-sticky-panel__content {
+	padding-right: 125px;
+}

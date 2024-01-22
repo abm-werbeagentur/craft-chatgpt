@@ -1,0 +1,14 @@
+{% set languages = craft.abmChatGpt.getLanguages() %}
+{% set prompts = craft.abmChatGpt.getPrompts(true) %}
+{% set currentLang = "" %}
+{% for site in craft.app.sites.getAllSites() %}
+	{% if site.handle == craft.app.request.getQueryParam('site') %}
+		{% set currentLang = site.language %}
+	{% endif %}
+{% endfor %}
+{% if currentLang|length == 0 %}
+	{% set currentLang = craft.app.sites.getAllSites()[0].language %}
+{% endif %}
+const abm_chatgpt_languages = {{ languages|json_encode()|raw }};
+const abm_chatgpt_prompts = {{ prompts|json_encode()|raw }};
+const abm_chatgpt_currentSiteLanguage = '{{ currentLang }}';

@@ -1,0 +1,29 @@
+{
+	"name": "abmat/craft-chatgpt",
+	"description": "Chat GPT Prompts and translations",
+	"type": "craft-plugin",
+	"license": "MIT",
+	"authors": [
+	  {
+		"name": "ABM Feregyhazy & Simon GmbH",
+		"homepage": "https://www.abm.at"
+	  }
+	],
+	"require": {
+		"craftcms/cms": "^4.0"
+	},
+	"support": {
+		"issues": "https://github.com/abm-werbeagentur/craft-chatgpt/issues",
+    	"source": "https://github.com/abm-werbeagentur/craft-chatgpt"
+	},
+	"autoload": {
+	  "psr-4": {
+		"abmat\\chatgpt\\": "src/"
+	  }
+	},
+	"extra": {
+	  "name": "Chat GPT Generator",
+	  "handle": "abm-chatgpt",
+	  "class": "abmat\\chatgpt\\ChatGptPlugin"
+	}
+}

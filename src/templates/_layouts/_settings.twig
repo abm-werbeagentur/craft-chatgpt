@@ -1,0 +1,33 @@
+{% extends '_layouts/cp' %}
+{% set crumbs = [
+    { label: 'Chat GPT'|t('abm-chatgpt'), url: url('abm-chatgpt') },
+    { label: "Settings"|t('abm-chatgpt'), url: url('abm-chatgpt/settings') },
+] %}
+
+{% set selectedSubnavItem = 'abm-chatgpt-settings' %}
+
+{% set navItems = {
+    'settings-heading': { heading: "Settings"|t('abm-chatgpt') },
+    'general': { title: "General"|t('abm-chatgpt') },
+    'fields': { title: "Fields"|t('abm-chatgpt') },
+} %}
+
+{% set activeTab = craft.app.request.getSegment(3) ?? 'general' %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            {% for key, element in navItems %}
+                {% if element.heading is defined %}
+                    <li class="heading">
+                        <span>{{ element.heading }}</span>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ url('abm-chatgpt/settings/'~ key) }}" {{ activeTab == key ? 'class="sel"' }}>{{ element.title }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}

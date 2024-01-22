@@ -1,0 +1,137 @@
+{% extends 'abm-chatgpt/_layouts/_settings' %}
+
+{% import '_includes/forms' as forms %}
+
+{% set title = 'Settings' %}
+{% set selectedSubnavItem = 'settings' %}
+
+{% if craft.app.config.general.allowAdminChanges %}
+    {% set fullPageForm = true %}
+{% endif %}
+
+{% block content %}
+
+    {% if not craft.app.config.general.allowAdminChanges %}
+         {{ "General config {configvar} is set to false."|t('abm-chatgpt',{
+            "configvar": "craft.app.config.general.allowAdminChanges"
+        })}}
+        <br />
+        {{ "To set any settings, you have to enable this config"|t('abm-chatgpt')}}
+	 	
+	 {% else %}
+
+        <div style="margin-bottom: 48px;">
+            <p>{{ 'fieldsDescriptionText'|t('abm-chatgpt') }}</p>
+        </div>
+        <input type="hidden" name="action" value="plugins/save-plugin-settings">
+        <input type="hidden" name="pluginHandle" value="abm-chatgpt">
+        {% namespace 'settings' %}
+
+            {% if fields|length %}
+                <div class="tableview tablepane">
+
+                    <table class="data fullwidth">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="width: 30%">{{ 'Label' |t('abm-chatgpt') }}</th>
+                            <th scope="col" style="width: 30%">{{ 'Handle' |t('abm-chatgpt') }}</th>
+                            <th scope="col" style="width: 10%">{{ 'Field type' |t('abm-chatgpt') }}</th>
+                            <th scope="col" style="width: 20%">{{ 'Group' |t('abm-chatgpt') }}</th>
+                            <th class="thin" style="width: 10%">{{ 'Show Prompts Menu' |t('abm-chatgpt') }}</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="s-title">
+                            <td class="label-column">Title</td>
+                            <td class="handle-column">
+                                <div id="fields-handle-attribute" class="code small light copytextbtn" title="Copy to clipboard" role="button" aria-label="Copy to clipboard" tabindex="0" onclick="navigator.clipboard.writeText('title')">
+                                    <input type="text" value="title" readonly="" size="5" tabindex="-1">
+                                    <span data-icon="clipboard" aria-hidden="true"></span>
+                                </div></td>
+                            <td class="group-column">Entry Title</td>
+                            <td class="group-column"></td>
+                            <td class="enabled-column">
+                                {{ forms.lightswitch({
+                                    name: 'enabledFields[title].key',
+                                    on: settings.enabledFields['title'] is defined and settings.enabledFields['title'] == '1',
+                                }) }}
+                            </td>
+                        </tr>
+                        {% for field in fields %}
+                            <tr class="s-{{ field.id }}">
+                                <td class="label-column">{{ field.name }}</td>
+                                <td class="handle-column">
+                                    <div id="fields-handle-attribute" class="code small light copytextbtn" title="Copy to clipboard" role="button" aria-label="Copy to clipboard" tabindex="0" onclick="navigator.clipboard.writeText('{{ field.handle }}')">
+                                        <input type="text" value="{{ field.handle }}" readonly="" size="{{ field.handle|length }}" tabindex="-1">
+                                        <span data-icon="clipboard" aria-hidden="true"></span>
+                                    </div></td>
+                                <td class="group-column">{{ field.type }}</td>
+                                <td class="group-column">{{ field.group }}</td>
+                                <td class="enabled-column">
+                                    {{ forms.lightswitch({
+                                        name: 'enabledFields['~field.uid~'].key',
+                                        on: settings.enabledFields[field.uid] is defined and settings.enabledFields[field.uid] == '1',
+                                    }) }}
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div>
+                    <p>{{ 'No fields exist yet.'|t('abm-chatgpt') }}</p>
+                </div>
+            {% endif %}
+            </div>
+
+            {% if matrixFields|length %}
+                <div class="content-pane" style="margin-top: 40px">
+                <h2 style="margin-top: 40px">{{ 'Matrix Fields'|t('abm-chatgpt') }}</h2>
+                <div class="tableview">
+                    {% for matrixField in matrixFields %}
+                    <h3>{{ matrixField.name }}</h3>
+                    <table class="data fullwidth">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="width: 30%">{{ 'Label' |t('abm-chatgpt') }}</th>
+                            <th scope="col" style="width: 30%">{{ 'Handle' |t('abm-chatgpt') }}</th>
+                            <th scope="col" style="width: 10%">{{ 'Field type' |t('abm-chatgpt') }}</th>
+                            <th scope="col" style="width: 20%">{{ 'Block' |t('abm-chatgpt') }}</th>
+                            <th class="thin" style="width: 10%">{{ 'Show Prompts Menu' |t('abm-chatgpt') }}</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if matrixField.fields|length %}
+                            {% for field in matrixField.fields %}
+                                <tr class="s-{{ field.id }}">
+                                    <td class="label-column">{{ field.name }}</td>
+                                    <td class="handle-column">
+                                        <div id="fields-handle-attribute" class="code small light copytextbtn" title="Copy to clipboard" role="button" aria-label="Copy to clipboard" tabindex="0" onclick="navigator.clipboard.writeText('{{ field.handle }}')">
+                                            <input type="text" value="{{ field.handle }}" readonly="" size="{{ field.handle|length }}" tabindex="-1">
+                                            <span data-icon="clipboard" aria-hidden="true"></span>
+                                        </div></td>
+                                    <td class="group-column">{{ field.type }}</td>
+                                    <td class="group-column">{{ field.group }}</td>
+                                    <td class="enabled-column">
+                                        {{ forms.lightswitch({
+                                            name: 'enabledFields['~field.uid~'].key',
+                                            on: settings.enabledFields[field.uid] is defined and settings.enabledFields[field.uid] == '1',
+                                        }) }}
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    </table>
+                    {% endfor %}
+                </div>
+                </div>
+            {% endif %}
+        {% endnamespace %}
+    {% endif %}
+{% endblock %}

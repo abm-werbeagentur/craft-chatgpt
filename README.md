@@ -7,10 +7,6 @@
 ## Installation
 This plugin can be installed from the [Craft Plugin Store](https://plugins.craftcms.com/) or with [Composer](https://packagist.org/).
 
-### Craft Plugin Store
-
-Open your Craft project's control panel, navigate to the Plugin Store, and search for chatgpt.
-
 ### Composer
 
 Open your terminal, navigate to your Craft project's root directory and run the following command:
@@ -27,4 +23,4 @@ php craft plugin/install abm-chatgpt
 
 ### Requirements
 
-Chat Gpt 1.x requires Craft CMS 4.
+Chat Gpt 1.x requires Craft CMS 4.x.

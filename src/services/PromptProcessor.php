@@ -52,7 +52,7 @@ class PromptProcessor {
 	private function _processSystemPrompt($prompt,$query,$lang) {
 
 		if($prompt == '_translate_'){
-			$prompt="Translate to {$lang}: {$query}";
+			$prompt="Keep html notations and translate following text to {$lang}: {$query}";
 			return [
 				'processed'=>ChatGptPlugin::getInstance()->request->send($query, $prompt, 30000, 0.7, true),
 				'replaceText'=>1

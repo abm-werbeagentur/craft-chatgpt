@@ -14,7 +14,8 @@
 	},
 	"support": {
 		"issues": "https://github.com/abm-werbeagentur/craft-chatgpt/issues",
-    	"source": "https://github.com/abm-werbeagentur/craft-chatgpt"
+    	"source": "https://github.com/abm-werbeagentur/craft-chatgpt",
+		"docs": "https://github.com/abm-werbeagentur/craft-chatgpt/blob/main/README.md"
 	},
 	"autoload": {
 	  "psr-4": {

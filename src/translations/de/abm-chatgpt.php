@@ -45,7 +45,7 @@ return [
 	'Label' => 'Bezeichnung',
 	'Handle' => 'Handle',
 	'Field type' => 'Feldtyp',
-	'Group'=> 'Grippe',
+	'Group'=> 'Gruppe',
 	'Show Prompts Menu' => 'Prompt Menü anzeigen',
 	'No fields exist yet.' => 'Es gibt noch keine Felder.',
 	'Matrix Fields' => 'Matrix Felder',

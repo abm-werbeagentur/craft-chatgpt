@@ -23,7 +23,7 @@
 	  }
 	},
 	"extra": {
-	  "name": "Chat GPT Generator",
+	  "name": "ChatGPT for editors",
 	  "handle": "abm-chatgpt",
 	  "class": "abmat\\chatgpt\\ChatGptPlugin"
 	}

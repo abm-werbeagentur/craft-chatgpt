@@ -1,4 +1,4 @@
-# craft-chatgpt
+# ChatGPT for editors
 
 <img src="src/icon.svg" width="100">
 

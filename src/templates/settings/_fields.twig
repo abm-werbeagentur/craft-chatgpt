@@ -33,8 +33,7 @@
                     <table class="data fullwidth">
                         <thead>
                         <tr>
-                            <th scope="col" style="width: 30%">{{ 'Label' |t('abm-chatgpt') }}</th>
-                            <th scope="col" style="width: 30%">{{ 'Handle' |t('abm-chatgpt') }}</th>
+                            <th scope="col" style="width: 60%">{{ 'Label' |t('abm-chatgpt') }}</th>
                             <th scope="col" style="width: 10%">{{ 'Field type' |t('abm-chatgpt') }}</th>
                             <th scope="col" style="width: 20%">{{ 'Usage' |t('abm-chatgpt') }}</th>
                             <th class="thin" style="width: 10%">{{ 'Show Prompts Menu' |t('abm-chatgpt') }}</th>
@@ -44,12 +43,7 @@
                         <tbody>
                         <tr class="s-title">
                             <td class="label-column">Title</td>
-                            <td class="handle-column">
-                                <div id="fields-handle-attribute" class="code small light copytextbtn" title="Copy to clipboard" role="button" aria-label="Copy to clipboard" tabindex="0" onclick="navigator.clipboard.writeText('title')">
-                                    <input type="text" value="title" readonly="" size="5" tabindex="-1">
-                                    <span data-icon="clipboard" aria-hidden="true"></span>
-                                </div></td>
-                            <td class="group-column">Entry Title</td>
+                           <td class="group-column">Entry Title</td>
                             <td class="group-column"></td>
                             <td class="enabled-column">
                                 {{ forms.lightswitch({
@@ -61,11 +55,6 @@
                         {% for field in fields %}
                             <tr class="s-{{ field.id }}">
                                 <td class="label-column">{{ field.name }}</td>
-                                <td class="handle-column">
-                                    <div id="fields-handle-attribute" class="code small light copytextbtn" title="Copy to clipboard" role="button" aria-label="Copy to clipboard" tabindex="0" onclick="navigator.clipboard.writeText('{{ field.handle }}')">
-                                        <input type="text" value="{{ field.handle }}" readonly="" size="{{ field.handle|length }}" tabindex="-1">
-                                        <span data-icon="clipboard" aria-hidden="true"></span>
-                                    </div></td>
                                 <td class="group-column">{{ field.type }}</td>
                                 <td class="group-column">{{ field.usages|raw }}</td>
                                 <td class="enabled-column">

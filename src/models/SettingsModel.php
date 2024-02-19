@@ -2,8 +2,16 @@
 namespace abmat\chatgpt\models;
 
 use Craft;
+use craft\base\Chippable;
+use craft\base\Colorable;
+use craft\base\CpEditable;
+use craft\base\Iconic;
 use craft\base\Model;
+use craft\helpers\Cp;
 use craft\helpers\App;
+use craft\helpers\ArrayHelper;
+use craft\helpers\Html;
+use craft\models\FieldLayout;
 
 class SettingsModel extends Model
 {
@@ -57,43 +65,83 @@ class SettingsModel extends Model
 		foreach ( \Craft::$app->getFields()->getAllFields() as $field ) {
 
 			if ( in_array( ( new \ReflectionClass( $field ) )->getName(), $this->_supportedFieldTypes ) ) {
+				
 				$fields[] = [
 					'id'     => $field->id,
 					'uid'    => $field->uid,
 					'handle' => $field->handle,
 					'name'   => $field->name,
-					'group'  => $field->getGroup()->name,
-					'type'   => $this->_getClass( $field )
+					'usages'  => $this->getUsageList($field),
+					'type'   => $this->_getClass($field)
 				];
 			}
-
 		}
 
 		return $fields;
 	}
 
-	public function getMatrixFieldsList(): array {
-		$matrixFields = [];
-		foreach ( \Craft::$app->getFields()->getFieldsByType( 'craft\fields\Matrix' ) as $matrixField ) {
-			$matrixFields [ $matrixField->handle ]['name']   = $matrixField->name;
-			$matrixFields [ $matrixField->handle ]['fields'] = [];
-			foreach ( \Craft::$app->getMatrix()->getBlockTypesByFieldId( $matrixField->id ) as $block ) {
-				foreach ( \Craft::$app->getFields()->getAllFields( "matrixBlockType:" . $block->uid ) as $blockField ) {
-					if ( in_array( ( new \ReflectionClass( $blockField ) )->getName(), $this->_supportedFieldTypes ) ) {
-						$matrixFields [ $matrixField->handle ]['fields'][] = [
-							'id'     => $blockField->id,
-							'uid'    => $blockField->uid,
-							'handle' => $blockField->handle,
-							'name'   => $blockField->name,
-							'group'  => $block->name,
-							'type'   => $this->_getClass( $blockField )
-						];
-					}
+	private function getUsageList($field) {
+		$layouts = \Craft::$app->getFields()->findFieldUsages($field);
+		if (empty($layouts)) {
+			return Html::tag('i', Craft::t('app', 'No usages'));
+		}
+
+		/** @var FieldLayout[][] $layoutsByType */
+		$layoutsByType = ArrayHelper::index($layouts,
+			fn(FieldLayout $layout) => $layout->uid,
+			[fn(FieldLayout $layout) => $layout->type ?? '__UNKNOWN__'],
+		);
+		/** @var FieldLayout[] $unknownLayouts */
+		$unknownLayouts = ArrayHelper::remove($layoutsByType, '__UNKNOWN__');
+		/** @var FieldLayout[] $layoutsWithProviders */
+		$layoutsWithProviders = [];
+
+		// re-fetch as many of these as we can from the element types,
+		// so they have a chance to supply the layout providers
+		foreach ($layoutsByType as $type => &$typeLayouts) {
+			/** @var string|ElementInterface $type */
+			/** @phpstan-ignore-next-line */
+			foreach ($type::fieldLayouts(null) as $layout) {
+				if (isset($typeLayouts[$layout->uid]) && $layout->provider instanceof Chippable) {
+					$layoutsWithProviders[] = $layout;
+					unset($typeLayouts[$layout->uid]);
 				}
 			}
 		}
+		unset($typeLayouts);
 
-		return $matrixFields;
+		$labels = [];
+		$items = array_map(function(FieldLayout $layout) use (&$labels) {
+			/** @var FieldLayoutProviderInterface&Chippable $provider */
+			$provider = $layout->provider;
+			$label = $labels[] = $provider->getUiLabel();
+			$url = $provider instanceof CpEditable ? $provider->getCpEditUrl() : null;
+			$icon = $provider instanceof Iconic ? $provider->getIcon() : null;
+
+			$labelHtml = Html::beginTag('span', [
+				'class' => ['flex', 'flex-nowrap', 'gap-s'],
+			]);
+			if ($icon) {
+				$labelHtml .= Html::tag('div', Cp::iconSvg($icon), [
+					'class' => array_filter([
+						'cp-icon',
+						'small',
+						$provider instanceof Colorable ? $provider->getColor()?->value : null,
+					]),
+				]);
+			}
+			$labelHtml .= Html::tag('span', Html::encode($label)) .
+				Html::endTag('span');
+
+			return $url ? Html::a($labelHtml, $url) : $labelHtml;
+		}, $layoutsWithProviders);
+
+		// sort by label
+		array_multisort($labels, SORT_ASC, $items);
+
+		return Html::ul($items, [
+			'encode' => false,
+		]);
 	}
 
 	protected function _getClass( $object ): string {

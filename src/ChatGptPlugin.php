@@ -219,14 +219,18 @@ class ChatGptPlugin extends \craft\base\Plugin {
 		$nav['url'] = 'abm-chatgpt';
 
 		if (Craft::$app->getUser()->getIsAdmin()) {
+			
 			$nav['subnav']['abm-chatgpt-prompts'] = [
 				'label' => Craft::t('abm-chatgpt', 'Prompts Templates'),
 				'url' => 'abm-chatgpt/prompts',
 			];
-			$nav['subnav']['abm-chatgpt-settings'] = [
-				'label' => Craft::t('abm-chatgpt', 'Settings'),
-				'url' => 'abm-chatgpt/settings/general',
-			];
+
+			if(Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+				$nav['subnav']['abm-chatgpt-settings'] = [
+					'label' => Craft::t('abm-chatgpt', 'Settings'),
+					'url' => 'abm-chatgpt/settings/general',
+				];
+			}
 		}
 
 		return $nav;

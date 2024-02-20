@@ -9,9 +9,11 @@ use craft\elements\Entry;
 use craft\events\DefineFieldHtmlEvent;
 use craft\events\DefineHtmlEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\events\RegisterUserPermissionsEvent;
 use craft\events\TemplateEvent;
 use craft\helpers\StringHelper;
 use craft\helpers\UrlHelper;
+use craft\services\UserPermissions;
 use craft\web\Application;
 use craft\web\UrlManager;
 use craft\web\View;
@@ -55,12 +57,14 @@ class ChatGptPlugin extends \craft\base\Plugin {
 
 		$this->_setComponents();
 
-		Craft::$app->on(Application::EVENT_INIT, function() {
-			if (Craft::$app->getUser()->getIdentity()) {
-				$this->_setRoutes();
-				$this->_setEvents();
-			}
-		});
+		if (Craft::$app->getRequest()->getIsCpRequest()) {
+
+            if (Craft::$app->getEdition() === Craft::Pro) {
+                $this->_registerPermissions();
+            }
+			$this->_setEvents();
+            $this->_registerCpRoutes();
+        }
 	}
 
 	protected function _setComponents(){
@@ -71,48 +75,79 @@ class ChatGptPlugin extends \craft\base\Plugin {
 		]);
 	}
 
-	protected function _setRoutes() {
+	protected function _registerCpRoutes() {
+
 		// Register CP routes
 		Event::on(
 			UrlManager::class,
 			UrlManager::EVENT_REGISTER_CP_URL_RULES,
 			function (RegisterUrlRulesEvent $event) {
+		
+				$currentUser = Craft::$app->getUser();
 
-				$event->rules['abm-chatgpt/settings/general'] = 'abm-chatgpt/settings/general';
-				$event->rules['abm-chatgpt/settings/fields'] = 'abm-chatgpt/settings/fields';
+				if($currentUser->checkPermission('abm-chatgpt-manage-settings')) {
+					$event->rules['abm-chatgpt'] = 'abm-chatgpt/settings/general';
+					
+					$event->rules['abm-chatgpt/settings/general'] = 'abm-chatgpt/settings/general';
+					$event->rules['abm-chatgpt/settings/fields'] = 'abm-chatgpt/settings/fields';
+				}
 
-				$event->rules['abm-chatgpt/prompts'] = 'abm-chatgpt/prompts/index';
-				$event->rules['abm-chatgpt/prompts/add'] = 'abm-chatgpt/prompts/create';
-				$event->rules['abm-chatgpt/prompts/edit/<id:\d+>'] = 'abm-chatgpt/prompts/edit';
-				$event->rules['abm-chatgpt/prompts/delete/<id:\d+>'] = 'abm-chatgpt/prompts/remove';
+				if($currentUser->checkPermission('abm-chatgpt-manage-prompts')) {
+					$event->rules['abm-chatgpt'] = 'abm-chatgpt/prompts/index';
+
+					$event->rules['abm-chatgpt/prompts'] = 'abm-chatgpt/prompts/index';
+					$event->rules['abm-chatgpt/prompts/add'] = 'abm-chatgpt/prompts/create';
+					$event->rules['abm-chatgpt/prompts/edit/<id:\d+>'] = 'abm-chatgpt/prompts/edit';
+					$event->rules['abm-chatgpt/prompts/delete/<id:\d+>'] = 'abm-chatgpt/prompts/remove';
+				}
 			}
 		);
 	}
 
-	protected function _setEvents(){
+	protected function _registerPermissions(): void
+	{
+	    Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event): void {
+
+            $permissions = [
+                'abm-chatgpt-manage-prompts' => ['label' => Craft::t('abm-chatgpt', 'Manage Prompts')],
+                'abm-chatgpt-manage-settings' => ['label' => Craft::t('app', 'Manage Settings')],
+            ];
+
+            $event->permissions[] = [
+                'heading' => Craft::t('abm-chatgpt', 'ChatGPT for editors'),
+                'permissions' => $permissions,
+            ];
+        });
+    }
+
+	protected function _setEvents() {
+
+		$currentUser = Craft::$app->getUser();
 		
 		/**
 		 * Warn user in case there are no selected fields.
 		 */
-		Event::on(
-			ChatGptPlugin::class,
-			ChatGptPlugin::EVENT_AFTER_SAVE_SETTINGS,
-			function (Event $event) {
+		if($currentUser->checkPermission('abm-chatgpt-manage-settings')) {
+			Event::on(
+				ChatGptPlugin::class,
+				ChatGptPlugin::EVENT_AFTER_SAVE_SETTINGS,
+				function (Event $event) {
 
-				/** @var SettingsModel $settings */
-				$settings = ChatGptPlugin::getInstance()->getSettings();
+					/** @var SettingsModel $settings */
+					$settings = ChatGptPlugin::getInstance()->getSettings();
 
-				if (!in_array(true, $settings->enabledFields, false)){
-					Craft::$app->getSession()->setError(Craft::t('abm-chatgpt', 'Fields are not selected in settings. Please select fields in plugin settings under \'Fields\' tab.'));
+					if (!in_array(true, $settings->enabledFields, false)) {
+						Craft::$app->getSession()->setError(Craft::t('abm-chatgpt', 'Fields are not selected in settings. Please select fields in plugin settings under \'Fields\' tab.'));
+					}
+
+					if ($settings->apiToken === '') {
+						Craft::$app->getSession()->setError(Craft::t('abm-chatgpt', 'API Access Token required.'));
+					}
 				}
+			);
+		}
 
-				if ($settings->apiToken === ''){
-					Craft::$app->getSession()->setError(Craft::t('abm-chatgpt', 'API Access Token required.'));
-				}
-			}
-		);
-
-		if (Craft::$app->getRequest()->getIsCpRequest()) {
+		if($currentUser->checkPermission('accessPlugin-abm-chatgpt')) {
 			Event::on(
 				CraftVariable::class,
 				CraftVariable::EVENT_INIT,
@@ -121,7 +156,7 @@ class ChatGptPlugin extends \craft\base\Plugin {
 					$variable->set('abmChatGpt', ChatGptVariable::class);
 				}
 			);
-	
+
 			/**
 			 * Attach button to selected fields.
 			 */
@@ -131,12 +166,12 @@ class ChatGptPlugin extends \craft\base\Plugin {
 				static function (DefineFieldHtmlEvent $event) {
 					/** @var SettingsModel $settings */
 					$settings = ChatGptPlugin::getInstance()->getSettings();
-	
+
 					if (
 						array_key_exists($event->sender->uid, $settings->enabledFields)
 						&& $settings->enabledFields[$event->sender->uid]
 						&& $settings->apiToken
-					){
+					) {
 						$event->html .= Craft::$app->view->renderTemplate('abm-chatgpt/_fields.twig',
 							[ 'event' => $event, 'hash' => StringHelper::UUID()] );
 					}
@@ -214,22 +249,32 @@ class ChatGptPlugin extends \craft\base\Plugin {
 	public function getCpNavItem(): ?array
 	{
 		$nav = parent::getCpNavItem();
+		
+		$currentUser = Craft::$app->getUser();
 
-		$nav['label'] = \Craft::t('abm-chatgpt', 'Chat GPT');
-		$nav['url'] = 'abm-chatgpt';
+		if ($currentUser->checkPermission('abm-chatgpt-manage-prompts') || $currentUser->checkPermission('abm-chatgpt-manage-settings')) {
 
-		if (Craft::$app->getUser()->getIsAdmin()) {
-			$nav['subnav']['abm-chatgpt-prompts'] = [
-				'label' => Craft::t('abm-chatgpt', 'Prompts Templates'),
-				'url' => 'abm-chatgpt/prompts',
-			];
-			$nav['subnav']['abm-chatgpt-settings'] = [
-				'label' => Craft::t('abm-chatgpt', 'Settings'),
-				'url' => 'abm-chatgpt/settings/general',
-			];
+			$nav['label'] = \Craft::t('abm-chatgpt', 'Chat GPT');
+			$nav['url'] = 'abm-chatgpt';
+
+			if($currentUser->checkPermission('abm-chatgpt-manage-prompts')) {
+				$nav['subnav']['abm-chatgpt-prompts'] = [
+					'label' => Craft::t('abm-chatgpt', 'Prompts Templates'),
+					'url' => 'abm-chatgpt/prompts',
+				];
+			}
+
+			if($currentUser->checkPermission('abm-chatgpt-manage-settings')) {
+				$nav['subnav']['abm-chatgpt-settings'] = [
+					'label' => Craft::t('abm-chatgpt', 'Settings'),
+					'url' => 'abm-chatgpt/settings/general',
+				];
+			}
+
+			return $nav;
+		} else {
+			return null;
 		}
-
-		return $nav;
 	}
 
 	/**

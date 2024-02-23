@@ -27,8 +27,7 @@ class SettingsController extends \craft\web\Controller {
 
 		return $this->renderTemplate( 'abm-chatgpt/settings/_fields', [
 			'settings'     => $settings,
-			'fields'       => $settings->getRegularFieldsList(),
-			'matrixFields' => $settings->getMatrixFieldsList()
+			'fields'       => $settings->getRegularFieldsList()
 		] );
 	}
 }

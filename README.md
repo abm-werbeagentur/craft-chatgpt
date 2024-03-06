@@ -23,7 +23,7 @@ php craft plugin/install abm-chatgpt
 
 ### Requirements
   * OpenAI Account with API key
-  * Craft CMS 4.x
+  * Craft CMS 4.x or later
 
 ## Description
 

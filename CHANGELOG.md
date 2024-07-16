@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.2 - 2024-07-16
+### added
+- model gpt-4-turbo
+- model gpt-4o
+
 ## 2.0.1 - 2024-03-06
 
 ### Changes

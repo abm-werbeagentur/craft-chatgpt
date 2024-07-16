@@ -22,7 +22,7 @@ class Request {
 
 			$maxTokens = min( $maxTokens, $this->_getMaxTokensForModel( $model ) );
 			if($isTranslate) {
-				$maxTokens = floor($maxTokens/2);
+				$maxTokens = null;
 			}
 
 			$client = new Client();
@@ -38,7 +38,7 @@ class Request {
 			$body = $res->getBody()->getContents();
 			$json = json_decode( $body, true );
 
-			if(isset($json['error'])){
+			if(isset($json['error'])) {
 				$message = $json['error']['message'];
 
 				throw new \Exception( $message );
@@ -59,15 +59,20 @@ class Request {
 
 	protected function _getMaxTokensForModel( $model ) {
 
-		if ( strpos( $model, 'gpt-3.5-turbo' ) === 0 ) {
-			return 4097;
+		switch($model) {
+			case 'gpt-3.5-turbo':
+				return 4097;
 
-		} elseif ( strpos( $model, 'gpt-4' ) === 0 ) {
-			return 7900;
+			case 'gpt-4':
+				return 7900;
 
+			case 'gpt-4-turbo': 
+			case 'gpt-4o':
+				return 8100;
+
+			default: 
+				return 2000;
 		}
-
-		return 2000;
 	}
 
 	protected function _buildTextGenerationRequestBody( $model, $prompt, $maxTokensToGenerate, $temperature = 0.7 ) {
@@ -78,12 +83,17 @@ class Request {
 			'content' => $prompt,
 		];
 
-		return json_encode( [
+		$requestBody = [
 			'model'       => $model,
 			'messages'    => $messages,
 			"temperature" => $temperature,
-			'max_tokens'  => $maxTokensToGenerate,
-		] );
+		];
+
+		if($maxTokensToGenerate) {
+			$requestBody['max_tokens'] = $maxTokensToGenerate;
+		}
+
+		return json_encode( $requestBody );
 	}
 
 	protected function _getTextGenerationBasedOnModel( $model, $choices ) {

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.3 - 2024-10-22
+### fixed
+- switch from locale code to language name
+
 ## 2.0.2 - 2024-07-16
 ### added
 - model gpt-4-turbo

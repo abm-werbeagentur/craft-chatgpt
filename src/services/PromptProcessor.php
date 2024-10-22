@@ -44,7 +44,7 @@ class PromptProcessor {
 			'replaceText'=>$promptRecord->replaceText
 		];
 	}
-	
+
 	private function _countWords($str){
 		return count(preg_split('~[^\p{L}\p{N}\']+~u', $str));
 	}
@@ -52,7 +52,8 @@ class PromptProcessor {
 	private function _processSystemPrompt($prompt,$query,$lang) {
 
 		if($prompt == '_translate_'){
-			$prompt="Keep html notations and translate following text to {$lang}: {$query}";
+			$language = locale_get_display_name($lang, 'en');
+			$prompt="Keep html notations and translate following text to {$language}: {$query}";
 			return [
 				'processed'=>ChatGptPlugin::getInstance()->request->send($query, $prompt, 30000, 0.7, true),
 				'replaceText'=>1

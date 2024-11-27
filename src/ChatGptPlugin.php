@@ -40,7 +40,7 @@ class ChatGptPlugin extends \craft\base\Plugin {
 	/**
      * @inheritdoc
      */
-	public string $schemaVersion = '1.0.0';
+	public string $schemaVersion = '1.0.1';
 
     /**
      * @inheritdoc
@@ -82,12 +82,12 @@ class ChatGptPlugin extends \craft\base\Plugin {
 			UrlManager::class,
 			UrlManager::EVENT_REGISTER_CP_URL_RULES,
 			function (RegisterUrlRulesEvent $event) {
-		
+
 				$currentUser = Craft::$app->getUser();
 
 				if($currentUser->checkPermission('abm-chatgpt-manage-settings')) {
 					$event->rules['abm-chatgpt'] = 'abm-chatgpt/settings/general';
-					
+
 					$event->rules['abm-chatgpt/settings/general'] = 'abm-chatgpt/settings/general';
 					$event->rules['abm-chatgpt/settings/fields'] = 'abm-chatgpt/settings/fields';
 				}
@@ -123,7 +123,7 @@ class ChatGptPlugin extends \craft\base\Plugin {
 	protected function _setEvents() {
 
 		$currentUser = Craft::$app->getUser();
-		
+
 		/**
 		 * Warn user in case there are no selected fields.
 		 */
@@ -249,7 +249,7 @@ class ChatGptPlugin extends \craft\base\Plugin {
 	public function getCpNavItem(): ?array
 	{
 		$nav = parent::getCpNavItem();
-		
+
 		$currentUser = Craft::$app->getUser();
 
 		if ($currentUser->checkPermission('abm-chatgpt-manage-prompts') || $currentUser->checkPermission('abm-chatgpt-manage-settings')) {

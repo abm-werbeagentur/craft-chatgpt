@@ -25,6 +25,7 @@ return [
 	'multiplierDescription' => 'Wählen Sie diese Option, wenn Sie die Länge der generierten Wörter im Verhältnis zur Länge der ausgewählten Wörter berechnen möchten. 1x = gleiche Länge wie der markierte Text, 2x bedeutet das Doppelte, usw. Die Zusammenfassung ist ein guter Kandidat für die Verwendung dieser Option.',
 	'Replace the text' => 'Ersetzen Sie den Text',
 	'promptReplaceText' => 'Der Text wird automatisch an ChatGPT gesendet und die Antwort wird den Text ersetzen. Wenn diese Option nicht ausgewählt ist, wird die Antwort von ChatGPT angehängt. Sie können dieses Verhalten für jeden Prompt separat ändern, indem Sie diese Option auswählen.',
+	'promptTemplateInstructions' => 'Verwenden Sie \[\[text\]\] als Platzhalter, um den Inhalt des Textfeldes an die Stelle einzufügen.',
 
 	// Settings
 	'General config {configvar} is set to false.' => 'Allgemeine Konfiguration {configvar} ist auf false gesetzt.',

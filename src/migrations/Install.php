@@ -39,7 +39,7 @@ class Install extends Migration
 		$this->createTable(PromptRecord::tableName(), [
 			'id' => $this->primaryKey(),
 			'label' => $this->string()->notNull(),
-			'template' => $this->string()->notNull(),
+			'template' => $this->string(1024)->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue(true),
 			'temperature' => $this->float()->notNull(),
 			'wordsType' => $this->integer()->notNull()->defaultValue(1),

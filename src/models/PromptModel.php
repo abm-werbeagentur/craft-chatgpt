@@ -97,6 +97,7 @@ class PromptModel extends Model
 		$rules=[
 			[['label', 'template', 'temperature'], 'required'],
 		];
+		$rules[] = [['template'], 'string', 'max' => 600];
 
 		return $rules;
 	}

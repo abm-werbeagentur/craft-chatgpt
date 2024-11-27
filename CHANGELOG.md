@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.4 - 2024-11-27
+### changes
+- added attribute maxlength to textarea for the prompt
+- added instructions for the prompt template
+- added validation rule for the prompt template
+- added character counter for the prompt template
+- increased max length for the prompt template
+
 ## 2.0.3 - 2024-10-22
 ### fixed
 - switch from locale code to language name

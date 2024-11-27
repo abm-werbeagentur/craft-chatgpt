@@ -124,13 +124,39 @@
     }) }}
 
     {{ forms.textAreaField({
+        id: 'PromptTemplateTextarea',
         label: 'Prompt Template'|t('abm-chatgpt'),
+        instructions: 'promptTemplateInstructions'|t('abm-chatgpt'),
         name: 'template',
         errors: prompt.getErrors('template'),
         required: true,
+        maxlength: 600,
         rows: 6,
-        value: prompt.template,
+        value: prompt.template
     }) }}
+
+    {% js %}
+    const PromptTemplateTextarea = document.getElementById('PromptTemplateTextarea');
+    const maxLengthPromptTemplateTextarea = PromptTemplateTextarea.getAttribute('maxlength');
+    let currentPromptLength = PromptTemplateTextarea.value.replace(/\n/g, "\r\n").length;
+
+    const characterCounter = document.createElement("div");
+    characterCounter.innerHTML = 'Approx ' + currentPromptLength + ' / ' + maxLengthPromptTemplateTextarea;
+    PromptTemplateTextarea.parentNode.insertBefore(characterCounter, PromptTemplateTextarea.nextSibling);
+
+    PromptTemplateTextarea.addEventListener("input", ()=> {
+        let currentPromptLength = PromptTemplateTextarea.value.replace(/\n/g, "\r\n").length;
+        characterCounter.innerHTML = 'Approx ' + currentPromptLength + ' / ' + maxLengthPromptTemplateTextarea;
+    });
+
+    PromptTemplateTextarea.addEventListener("keypress", (evt)=> {
+
+        let currentPromptLength = PromptTemplateTextarea.value.replace(/\n/g, "\r\n").length;
+        if(currentPromptLength>=maxLengthPromptTemplateTextarea) {
+            evt.preventDefault();
+        }
+    });
+    {% endjs %}
 
 {% endblock %}
 

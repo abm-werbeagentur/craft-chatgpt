@@ -48,7 +48,6 @@ class PromptsController extends \craft\web\Controller {
 			] );
 		}
 
-
 		if ( ChatGptPlugin::getInstance()->promptService->save($promptModel)) {
 			\Craft::$app->getSession()->setNotice(\Craft::t('abm-chatgpt', "Prompt updated"));
 			return $this->redirect( 'abm-chatgpt/prompts' );

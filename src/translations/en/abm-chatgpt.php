@@ -25,6 +25,7 @@ return [
 	'multiplierDescription' => 'Choose this option if you want to calculate the length of the generated words relative to the length of words selected. 1x = same length as select text, 2x means two times, etc. Summarization is a good candidate to use this option for.',
 	'Replace the text' => 'Replace the text',
 	'promptReplaceText' => 'The text will be automatically sent to ChatGPT and the response will replace the text. When not selected, the response from ChatGPT will be appended. You can modify this behavior for each prompt separately by selecting this option.',
+	'promptTemplateInstructions' => 'Use \[\[text\]\] as a placeholder to insert the content of the text field at the position.',
 
 	// Settings
 	'General config {configvar} is set to false.' => 'General config {configvar} is set to false.',

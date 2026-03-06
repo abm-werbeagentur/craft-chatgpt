@@ -62,8 +62,11 @@ class ChatGptPlugin extends \craft\base\Plugin {
             if (Craft::$app->edition === \craft\enums\CmsEdition::Pro) {
                 $this->_registerPermissions();
             }
-			$this->_setEvents();
-            $this->_registerCpRoutes();
+
+			Craft::$app->onInit(function () {
+				$this->_setEvents();
+				$this->_registerCpRoutes();
+			});
         }
 	}
 

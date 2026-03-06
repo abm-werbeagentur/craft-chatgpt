@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.5 - 2025-03-06
+### changes
+- deferred some functions until craft is fully initialized
+
 ## 2.0.4 - 2024-11-27
 ### changes
 - added attribute maxlength to textarea for the prompt
